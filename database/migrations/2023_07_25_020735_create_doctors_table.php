@@ -2,6 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -23,22 +25,22 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        DB::table('doctors')->insert([
-            'nama_depan' => 'Dokter',
-            'nama_belakang' => '1',
-            'no_telp' => '080011112222',
-            'alamat' => 'Bandung',
-            'username' => 'doktersatu',
-            'password' => Hash::make('12345678'),
-        ]);
-        DB::table('doctors')->insert([
-            'nama_depan' => 'Dokter',
-            'nama_belakang' => '2',
-            'no_telp' => '080011113333',
-            'alamat' => 'Bekasi',
-            'username' => 'dokterdua',
-            'password' => Hash::make('12345678'),
-        ]);
+        // DB::table('doctors')->insert([
+        //     'nama_depan' => 'Dokter',
+        //     'nama_belakang' => '1',
+        //     'no_telp' => '080011112222',
+        //     'alamat' => 'Bandung',
+        //     'username' => 'doktersatu',
+        //     'password' => Hash::make('12345678'),
+        // ]);
+        // DB::table('doctors')->insert([
+        //     'nama_depan' => 'Dokter',
+        //     'nama_belakang' => '2',
+        //     'no_telp' => '080011113333',
+        //     'alamat' => 'Bekasi',
+        //     'username' => 'dokterdua',
+        //     'password' => Hash::make('12345678'),
+        // ]);
     }
 
     /**

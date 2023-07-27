@@ -38,8 +38,13 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'patient',
         ],
+        'webdoctor' => [
+            // 'redirectTo' => 'employee.home',
+            'driver' => 'session',
+            'provider' => 'doctor'
+        ]
     ],
 
     /*
@@ -60,10 +65,14 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'patient' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Patient::class,
         ],
+        'doctor' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Doctor::class,
+        ]
 
         // 'users' => [
         //     'driver' => 'database',
@@ -92,7 +101,7 @@ return [
 
     'passwords' => [
         'users' => [
-            'provider' => 'users',
+            'provider' => 'patient',
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
