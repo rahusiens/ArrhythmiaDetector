@@ -17,10 +17,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('guest')->group( function() {
-    Route::get('/', [DashboardController::class, 'index'])->name('home');
+    Route::get('/', [DashboardController::class, 'index_api'])->name('home');
 
-    Route::get('register', [PatientController::class, 'register'])->name('patient.register'); // done
-    Route::post('register', [PatientController::class, 'handleRegister'])->name('patient.handleRegister'); // done
+    Route::get('register', [PatientController::class, 'register_api'])->name('patient.register'); // done
+    Route::post('register', [PatientController::class, 'handleRegister_api'])->name('patient.handleRegister'); // done
     
     Route::get('login', [PatientController::class, 'login'])->name('login');
     Route::post('login', [PatientController::class, 'handleLogin'])->name('patient.handleLogin');
