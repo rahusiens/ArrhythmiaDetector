@@ -5,50 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class PatientController extends Controller
 {
-    public function index() {
-        return view('patients.dashboard');
-    }
-
-    public function index_api() {
-        return response()->json();
-    } 
-
-    public function register()
-    {
-        $patient = new Patient;
-        return view('auth.register', ['patient' => $patient]);
-    }
-    
-    public function register_api()
-    {
-        $patient = new Patient;
-        return response()->json($patient);
-    }
-    
-    public function handleRegister(Request $request)
-    {  
-        $attributes = $request->validate([
-            'username' => ['required', 'alpha_num', 'min:3', 'max:25'],
-            'password' => ['required', 'min:8'],
-            'address' => ['required', 'string'],
-            'phone' => ['required', 'string'],
-            'emergency_phone' => ['required', 'string'],
-            'age' => ['required', 'numeric'],
-            'gender' => ['required', 'string'],
-        ]);
-
-        $attributes['password'] = Hash::make($request->password);
-        Patient::create($attributes);
-
-        return redirect('/')->with('success', 'Registration Success');
-    }
-
-    public function handleRegister_api(Request $request)
+    public function register(Request $request)
     {  
         $validator = Validator::make($request->all(), [
             'username' => ['required', 'alpha_num', 'min:3', 'max:25'],
@@ -89,38 +53,115 @@ class PatientController extends Controller
         ], 200);
     }
 
-    public function login()
+    public function login(Request $request)
     {
-        return view('auth.login');
-    }
-
-    public function handleLogin(Request $request)
-    {
-        $attributes = $request->validate([
+        $validator = Validator::make($request->all(), [
             'username' => ['required'],
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($attributes)) {
-            return redirect('/patient');
+        if ($validator->fails()) {
+            return response()->json(
+                [
+                    'message' => 'Validation failed',
+                    'error' => $validator->errors(),
+                    'status' => '422'
+                ]
+            );
         }
 
-        // $user = User::whereEmail
-        // if (Auth::attempt($attributes)) {
-        //     return redirect('/');
-        // }
+        if (Auth::attempt($request->only('username', 'password'))) {
+            /** @var \App\Models\Patient $user **/
+            $user = Auth::user();
+
+            $token = $user->createToken('Patient')->accessToken;
+
+            return response()->json([
+                'message' => 'Successfully logged in!',
+                'status' => '200',
+                'token' => $token,
+                'data' => $user
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'Invalid credentials',
+                'status' => '401',
+            ]);
+        }
     }
 
-    public function edit(Patient $patient)
+    public function edit(Request $request)
     {
-        $patient = Auth::user();
-        return view('patients.edit', ['patient' => $patient]);
+        $validator = Validator::make($request->all(), [
+            'address' => ['required', 'string'],
+            'phone' => ['required', 'string'],
+            'emergency_phone' => ['required', 'string'],
+            'age' => ['required', 'numeric'],
+            'gender' => ['required', 'string'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'error' => $validator->errors(),
+                'status' => '422'
+            ]);
+        }
+
+        $patient = Patient::where('username', Auth::user()->username);
+        $patient->update([
+            'address' => $request->address,
+            'phone' => $request->phone,
+            'emergency_phone' => $request->emergency_phone,
+            'age' => $request->age,
+            'gender' => $request->gender,
+        ]);
+
+        return response()->json([
+            'message' => 'Successfully updated user!',
+            'user' => $patient,
+        ], 200);
     }
 
-    public function handleLogout(Request $request)
+    public function change_password(Request $request)
     {
-        Auth::logout();
+        $validator = Validator::make($request->all(), [
+            'password' => ['required', 'min:8'],
+        ]);
 
-        return redirect('/');
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'error' => $validator->errors(),
+                'status' => '422'
+            ]);
+        }
+
+        $patient = Patient::where('username', Auth::user()->username);
+        $patient->update([
+            'password' => bcrypt($request->password),
+        ]);
+
+        return response()->json([
+            'message' => 'Successfully updated user!',
+            'user' => $patient,
+        ], 200);
+    }
+
+    public function logout(Request $request)
+    {
+        /** @var \App\Models\Patient $user **/
+        $user = Auth::guard('apipatient')->user();
+        $accessToken = $user->token();
+        DB::table('oauth_refresh_tokens')
+            ->where('access_token_id', $accessToken->id)
+            ->update(['revoked' => true]);
+        $accessToken->revoke();
+
+        return response()->json([
+            'message' => 'Log Out Successful',
+            'status' => 200,
+            'data' => 'Unauthorized',
+        ]);
     }
 }

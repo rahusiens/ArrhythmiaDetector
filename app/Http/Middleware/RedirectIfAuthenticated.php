@@ -23,6 +23,9 @@ class RedirectIfAuthenticated
         elseif (Auth::guard('webdoctor')->check()) {
             return redirect('doctor');
         }
+        elseif (Auth::guard('apiadmin')->check()) {
+            return redirect('admin');
+        }
 
         return $next($request);
     }

@@ -15,11 +15,14 @@ class Authenticate extends Middleware
     protected function redirectTo(Request $request): ?string
     {
         if (! $request->expectsJson()) {
-            if (Auth::guard('web')->check()) {
+            if (Auth::guard('apipatient')->check()) {
                 return route('patient.dashboard');
             }
-            elseif (Auth::guard('webdoctor')->check()) {
+            elseif (Auth::guard('apidoctor')->check()) {
                 return route('doctor.dashboard');
+            }
+            elseif (Auth::guard('apiadmin')->check()) {
+                return route('admin.dashboard');
             }
             else {
                 return route('home');

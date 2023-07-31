@@ -7,7 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 
-class Patient extends Authenticatable
+class Admin extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -17,14 +17,12 @@ class Patient extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'nama_depan',
+        'nama_belakang',
+        'no_telp',
+        'alamat',
         'username',
         'password',
-        'address',
-        'phone',
-        'emergency_phone',
-        'age',
-        'gender',
-        // 'doctor',
     ];
 
     /**

@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Admin;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -44,6 +46,14 @@ class DatabaseSeeder extends Seeder
             'emergency_phone' => '0811587080',
             'age' => '21',
             'gender' => 'Male',
+        ]);
+        Admin::insert([
+            'nama_depan' => 'Admin',
+            'nama_belakang' => 'Satu',
+            'no_telp' => '080000000000',
+            'alamat' => 'Bontang',
+            'username' => 'admin',
+            'password' => Hash::make('12345678'),
         ]);
     }
 }

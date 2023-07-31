@@ -44,7 +44,25 @@ return [
             // 'redirectTo' => 'employee.home',
             'driver' => 'session',
             'provider' => 'doctor'
-        ]
+        ],
+        'webadmin' => [
+            'driver' => 'session',
+            'provider' => 'admin',
+        ],
+        
+        'apipatient' => [
+            'driver' => 'passport',
+            'provider' => 'patient'
+        ],
+        'apidoctor' => [
+            // 'redirectTo' => 'employee.home',
+            'driver' => 'passport',
+            'provider' => 'doctor'
+        ],
+        'apiadmin' => [
+            'driver' => 'passport',
+            'provider' => 'admin',
+        ],
     ],
 
     /*
@@ -72,6 +90,10 @@ return [
         'doctor' => [
             'driver' => 'eloquent',
             'model' => App\Models\Doctor::class,
+        ],
+        'admin' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
         ]
 
         // 'users' => [
