@@ -12,6 +12,12 @@ use Illuminate\Validation\Rule;
 
 class PatientController extends Controller
 {
+    public function index()
+    {
+        $patient = Patient::find(Auth::user()->id);
+        return response()->json($patient);
+    }
+
     public function register(Request $request)
     {  
         $validator = Validator::make($request->all(), [

@@ -29,6 +29,7 @@ Route::middleware('guest')->group( function() {
 });
 
 Route::middleware('auth:apipatient')->group( function() {
+    Route::get('patient', [PatientController::class, 'index'])->name('patient.dashboard');
     Route::put('patient/edit', [PatientController::class, 'edit'])->name('patient.edit'); // done
     Route::put('patient/change_password', [PatientController::class, 'change_password'])->name('patient.changePassword'); // done
     Route::post('patient', [PatientController::class, 'logout'])->name('patient.logout'); // done
