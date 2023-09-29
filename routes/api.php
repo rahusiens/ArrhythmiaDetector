@@ -26,6 +26,7 @@ Route::middleware('guest')->group( function() {
     Route::post('login', [PatientController ::class, 'login'])->name('patient.login'); // done
     Route::post('doctor/login', [DoctorController::class, 'login'])->name('doctor.login');
     Route::post('admin/login', [AdminController::class, 'login'])->name('admin.login'); // done
+    Route::post('send_data', [PatientController::class, 'send_data'])->name('patient.send_data');
 });
 
 Route::middleware('auth:apipatient')->group( function() {
@@ -33,6 +34,7 @@ Route::middleware('auth:apipatient')->group( function() {
     Route::put('patient/edit', [PatientController::class, 'edit'])->name('patient.edit'); // done
     Route::put('patient/change_password', [PatientController::class, 'change_password'])->name('patient.changePassword'); // done
     Route::post('patient', [PatientController::class, 'logout'])->name('patient.logout'); // done
+    Route::get('get_data', [PatientController::class, 'get_data'])->name('patient.get_data');
 });
 
 Route::middleware('auth:apidoctor')->group( function() {

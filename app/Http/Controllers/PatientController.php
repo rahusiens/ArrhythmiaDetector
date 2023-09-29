@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Patient;
+use App\Models\Record;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -49,7 +50,7 @@ class PatientController extends Controller
             'age' => $request->age,
             'gender' => $request->gender,
         ]);
-
+        
         $patient->save();
 
         return response()->json([
@@ -104,6 +105,7 @@ class PatientController extends Controller
             'emergency_phone' => ['required', 'string'],
             'age' => ['required', 'numeric'],
             'gender' => ['required', 'string'],
+            'password' => ['nullable', 'string', 'min:8']
         ]);
 
         if ($validator->fails()) {
@@ -114,14 +116,20 @@ class PatientController extends Controller
             ]);
         }
 
-        $patient = Patient::where('username', Auth::user()->username);
-        $patient->update([
+        $patient = Patient::where('username', Auth::user()->username)->first();
+
+        $dataToUpdate = [
             'address' => $request->address,
             'phone' => $request->phone,
             'emergency_phone' => $request->emergency_phone,
             'age' => $request->age,
             'gender' => $request->gender,
-        ]);
+        ];
+        if ($request->has('password')) {
+            $dataToUpdate['password'] = bcrypt($request->password);
+        }
+
+        $patient->update($dataToUpdate);
 
         return response()->json([
             'message' => 'Successfully updated user!',
@@ -168,6 +176,49 @@ class PatientController extends Controller
             'message' => 'Log Out Successful',
             'status' => 200,
             'data' => 'Unauthorized',
+        ]);
+    }
+
+    public function send_data(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'patient_id' => ['required'],
+            'time' => ['required'],
+            'lead1' => ['required'],
+            'lead2' => ['required']
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'error' => $validator->errors(),
+                'status' => '422'
+            ]);
+        }
+        
+        $record = new Record([
+            'patient_id' => $request->patient_id,
+            'time' => $request->time,
+            'lead1' => $request->lead1,
+            'lead2' => $request->lead2
+        ]);
+        
+        $record->save();
+
+        return response()->json([
+            'message' => 'Successfully saved record!',
+            'status' => '200',
+        ], 200);
+    }
+
+    public function get_data(Request $request) {
+        $user_id = Auth::user()->id;
+
+        $records = Record::select('id', 'time', 'lead1', 'lead2')
+            ->where('patient_id', $user_id)->get();
+        return response()->json([
+            'patient_id' => $user_id,
+            'records' => $records
         ]);
     }
 }
