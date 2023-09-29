@@ -42,6 +42,7 @@ Route::middleware('auth:apidoctor')->group( function() {
     Route::put('doctor/edit', [DoctorController::class, 'edit'])->name('doctor.edit'); // done
     Route::put('doctor/change_password', [DoctorController::class, 'change_password'])->name('doctor.changePassword'); // done
     Route::post('doctor', [DoctorController::class, 'logout'])->name('doctor.logout'); // done
+    Route::get('doctor/get_data', [DoctorController::class, 'get_data'])->name('doctor.get_data');
 });
 
 Route::middleware('auth:apiadmin')->group( function() {

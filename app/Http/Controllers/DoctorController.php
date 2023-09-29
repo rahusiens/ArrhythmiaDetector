@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Doctor;
 use App\Models\Patient;
+use App\Models\Record;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -125,6 +126,17 @@ class DoctorController extends Controller
             'message' => 'Log Out Successful',
             'status' => 200,
             'data' => 'Unauthorized',
+        ]);
+    }
+
+    public function get_data(Request $request) {
+        $user_id = $request->patient_id;
+
+        $records = Record::select('id', 'time', 'lead1', 'lead2')
+            ->where('patient_id', $user_id)->get();
+        return response()->json([
+            'patient_id' => $user_id,
+            'records' => $records
         ]);
     }
 }
